@@ -1,0 +1,29 @@
+backend:
+  replicas: 1
+  image: anuragkarumuri/backend_todo:32
+  name: backend
+  mysqlhost: mysql-service
+  mysqlport: "3306"
+  mysqluser: root
+  mysqlpasswd: password
+  mysqldb: todo_app
+  containerport: 3000
+  serviceport: 80
+  nodeport: 30008
+
+frontend:
+  name: frontend
+  replicas: 1
+  image: anuragkarumuri/frontend_todo:32
+  containerport: 5173
+  serviceport: 80
+
+mysql:
+  name: mysql
+  replicas: 1
+  image: mysql:5.7
+  port: 3306
+  serviceport: 3306
+
+service:
+ type: NodePort

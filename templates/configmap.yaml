@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.backend.name }}-configmap
+data:
+  MYSQL_HOST: {{ .Values.backend.mysqlhost }}
+  DB_PORT: "{{ .Values.backend.mysqlport }}"
+  MYSQL_USER: {{ .Values.backend.mysqluser }}
+  MYSQL_ROOT_PASSWORD: {{ .Values.backend.mysqlpasswd }}
+  MYSQL_DATABASE: {{ .Values.backend.mysqldb }}

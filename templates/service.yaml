@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.frontend.name }}-service
+spec:
+  selector:
+    app: {{ .Values.frontend.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.frontend.serviceport }}
+      targetPort: {{ .Values.frontend.containerport }}
+  type: {{ .Values.service.type }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.backend.name }}-service
+spec:
+  selector:
+    app: {{ .Values.backend.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.backend.serviceport }}
+      targetPort: {{ .Values.backend.containerport }}
+      nodePort: {{ .Values.backend.nodeport }}
+  type: {{ .Values.service.type }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mysql.name }}-service
+spec:
+  selector:
+    app: {{ .Values.mysql.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.mysql.serviceport}}
+      targetPort: {{ .Values.mysql.port }}
+  type: NodePort
