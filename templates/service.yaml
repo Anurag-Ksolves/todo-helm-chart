@@ -2,39 +2,39 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.frontend.name }}-service
+  name: {{ .Values.frontend.meatadata.name }}-service
 spec:
   selector:
-    app: {{ .Values.frontend.name }}
+    app: {{ .Values.frontend.spec.selector.matchLabels }}
   ports:
     - protocol: TCP
       port: {{ .Values.frontend.serviceport }}
-      targetPort: {{ .Values.frontend.containerport }}
+      targetPort: {{ .Values.frontend.spec.template.spec.containers.ports.containerport }}
   type: {{ .Values.service.type }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.backend.name }}-service
+  name: {{ .Values.backend.metadata.name }}-service
 spec:
   selector:
-    app: {{ .Values.backend.name }}
+    app: {{ .Values.backend.spec.selector.matchLabels }}
   ports:
     - protocol: TCP
-      port: {{ .Values.backend.serviceport }}
-      targetPort: {{ .Values.backend.containerport }}
-      nodePort: {{ .Values.backend.nodeport }}
+      port: {{ .Values.backend.configmap.data.serviceport }}
+      targetPort: {{ .Values.backend.spec.template.spec.containers.ports.containerport }}
+      nodePort: {{ .Values.backend.configmap.data.nodeport }}
   type: {{ .Values.service.type }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.mysql.name }}-service
+  name: {{ .Values.mysql.metadata.name }}-service
 spec:
   selector:
-    app: {{ .Values.mysql.name }}
+    app: {{ .Values.mysql.spec.selector.matchLabels.app }}
   ports:
     - protocol: TCP
       port: {{ .Values.mysql.serviceport}}
-      targetPort: {{ .Values.mysql.port }}
+      targetPort: {{ .Values.mysql.spec.template.spec.containers.ports.containerport }}
   type: NodePort

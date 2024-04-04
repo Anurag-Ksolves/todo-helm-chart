@@ -1,28 +1,70 @@
 backend:
-  replicas: 1
-  image: anuragkarumuri/backend_todo:32
-  name: backend
-  mysqlhost: mysql-service
-  mysqlport: "3306"
-  mysqluser: root
-  mysqlpasswd: password
-  mysqldb: todo_app
-  containerport: 3000
-  serviceport: 80
-  nodeport: 30008
+  metadata:
+    name: backend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels: backend
+    template:
+      metadata:
+        labels:
+          app: backend
+      spec:
+        containers:
+          name: backend-container
+          image: anuragkarumuri/backend_todo:32
+          ports:
+            containerport: 3000
+  configmap:
+    metadata:
+      name: backend-configmap
+    data:
+      mysqlhost: mysql-service
+      mysqlport: "3306"
+      mysqluser: root
+      mysqlpasswd: password
+      mysqldb: todo_app
+      serviceport: 80
+      nodeport: 30008
 
 frontend:
-  name: frontend
-  replicas: 1
-  image: anuragkarumuri/frontend_todo:32
-  containerport: 5173
+  meatadata:
+    name: frontend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels: frontend
+    template:
+      metadata:
+        labels:
+          app: frontend
+      spec:
+        containers:
+          name: frontend-container
+          image: anuragkarumuri/frontend_todo:32
+          ports:
+            containerport: 5173
   serviceport: 80
 
 mysql:
-  name: mysql
-  replicas: 1
-  image: mysql:5.7
-  port: 3306
+  metadata:
+    name: mysql
+  spec:
+    replicas: 1
+    serviceName: mysql-service
+    selector:
+      matchLabels:
+        app: mysql
+    template:
+      metadata:
+        labels:
+          app: mysql
+      spec:
+        containers:
+          name: mysql-container
+          image: mysql:5.7
+          ports:
+            containerport: 3306
   serviceport: 3306
 
 service:

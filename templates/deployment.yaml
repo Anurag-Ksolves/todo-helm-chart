@@ -2,80 +2,80 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.backend.name }}-deployment
+  name: {{ .Values.backend.metadata.name }}-deployment
 spec:
-  replicas: {{ .Values.backend.replicas }}
+  replicas: {{ .Values.backend.spec.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.backend.name }}
+      app: {{ .Values.backend.spec.selector.matchLabels }}
   template:
     metadata:
       labels:
-        app: {{ .Values.backend.name }}
+        app: {{ .Values.backend.spec.template.metadata.labels.app }}
     spec:
       containers:
-      - name: {{ .Values.backend.name }}
-        image: {{ .Values.backend.image }}
+      - name: {{ .Values.backend.spec.template.spec.containers.name }}
+        image: {{ .Values.backend.spec.template.spec.containers.image }}
         ports:
-        - containerPort: {{ .Values.backend.containerport }}
+        - containerPort: {{ .Values.backend.spec.template.spec.containers.ports.containerport }}
         envFrom:
         - configMapRef:
-            name: {{ .Values.backend.name }}-configmap
+            name: {{ .Values.backend.configmap.metadata.name }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.frontend.name }}-deployment
+  name: {{ .Values.frontend.meatadata.name }}-deployment
 spec:
-  replicas: 1
+  replicas: {{ .Values.frontend.spec.replicas}}
   selector:
     matchLabels:
-      app: {{ .Values.frontend.name }}
+      app: {{ .Values.frontend.spec.selector.matchLabels }}
   template:
     metadata:
       labels:
-        app: {{ .Values.frontend.name }}
+        app: {{ .Values.frontend.spec.template.metadata.labels.app }}
     spec:
       containers:
-      - name: {{ .Values.frontend.name }}
-        image: {{.Values.frontend.image }}
+      - name: {{ .Values.frontend.spec.template.spec.containers.name }}
+        image: {{.Values.frontend.spec.template.spec.containers.image }}
         ports:
-        - containerPort: {{ .Values.frontend.containerport }}
+        - containerPort: {{ .Values.frontend.spec.template.spec.containers.ports.containerport }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.mysql.name }}-statefulset
+  name: {{ .Values.mysql.metadata.name }}-statefulset
 spec:
-  replicas: {{ .Values.mysql.replicas }}
-  serviceName: {{ .Values.mysql.name }}-service
+  replicas: {{ .Values.mysql.spec.replicas }}
+  serviceName: {{ .Values.mysql.spec.serviceName }}
   selector:
     matchLabels:
-      app: {{ .Values.mysql.name }}
+      app: {{ .Values.mysql.spec.selector.matchLabels.app }}
   template:
     metadata:
       labels:
-        app: {{ .Values.mysql.name }}
+        app: {{ .Values.mysql.spec.template.metadata.labels.app }}
     spec:
       containers:
-      - name: {{ .Values.mysql.name }}
-        image: {{ .Values.mysql.image }}
+      - name: {{ .Values.mysql.spec.template.spec.containers.name }}
+        image: {{ .Values.mysql.spec.template.spec.containers.image }}
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.mysql.name }}-secret
+              name: {{ .Values.mysql.metadata.name }}-secret
               key: mysql-root-password
         - name: MYSQL_DATABASE
-          value: {{ .Values.backend.mysqldb }}
+          value: {{ .Values.backend.configmap.data.mysqldb }}
         ports:
-        - containerPort: {{ .Values.mysql.port }}
+        - containerPort: {{ .Values.mysql.spec.template.spec.containers.ports.containerport }}
         volumeMounts:
-        - name: {{ .Values.mysql.name }}-persistent-storage
+        - name: {{ .Values.mysql.metadata.name }}-persistent-storage
           mountPath: /var/lib/mysql
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.mysql.name }}-persistent-storage
+      name: {{ .Values.mysql.metadata.name }}-persistent-storage
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:
